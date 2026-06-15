@@ -1,0 +1,24 @@
+
+version: 2
+
+sources:
+  - name: bronze
+    catalog: bde2026
+    schema: bronze
+    tables:
+      - name: sellers_stream
+      - name: order_reviews_stream
+      - name: order_payments_stream
+      - name: closed_deals_stream
+      - name: translation_stream
+      - name: orders_stream
+      - name: customers_stream
+      - name: geolocation_stream
+      - name: products_stream
+      - name: order_items_stream
+  - name: silver
+    catalog: bde2026
+    schema: silver
+    tables:
+      - name: dim_date
+      

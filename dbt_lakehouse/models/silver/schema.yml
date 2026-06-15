@@ -1,0 +1,108 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Dimension table for customer."
+    columns:
+      - name: customer_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+  - name: dim_seller
+    description: "Dimension table for seller."
+    columns:
+      - name: seller_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+  - name: dim_product
+    description: "Dimension table for seller."
+    columns:
+      - name: product_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+  - name: dim_geography
+    description: "Dimension table for location."
+    columns:
+      - name: zip_code_prefix
+        description: "The primary key for this table"
+        tests:
+          - unique:
+              # Comment the line 'arguments:' to work on older versions of dbt (dbt-core < 1.10 and below)
+              arguments:
+                severity: error # accepts only `error` and `warn` default is error
+          - not_null
+  - name: fct_order
+    description: "Fact Table for Orders "
+    data_tests:
+      - dbt_utils.expression_is_true:
+          expression: CAST(DATE_FORMAT(purchase_at, 'yyyyMMdd') as int) in (select date_id from {{ ref('dim_date') }})
+
+    columns:
+      - name: order_id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "The foreign  key for this table"
+        tests:
+            - relationships:
+                arguments:
+                  to: ref('dim_customer')
+                  field: customer_id
+      # - name: purchase_at
+      #   description: "The purchase_at date should be in valid dates from dim_date "
+      #   data_tests:
+      #     - not_null 
+      #     - dbt_utils.expression_is_true:
+      #         expression: CAST(DATE_FORMAT(purchase_at, 'yyyyMMdd') as int) in (select date_id from {{ ref('dim_date') }})
+            
+  - name: fct_order_item
+    description: "Fact Table for Orders "
+    columns:
+      - name: order_id
+        description: "The orderid for this table"
+        tests:
+            - relationships:
+                arguments:
+                  to: ref('fct_order')
+                  field: order_id
+      - name: product_id
+        description: "The foreign  key for this table"
+        tests:
+            - relationships:
+                arguments:
+                  to: ref('dim_product')
+                  field: product_id
+      - name: seller_id
+        description: "The foreign  key for this table"
+        tests:
+            - relationships:
+                arguments:
+                  to: ref('dim_seller')
+                  field: seller_id
+  - name: fct_order_review
+    description: "Fact Table for Orders vs Reviews "
+    columns:
+      - name: order_id
+        description: "The orderid for this table"
+        tests:
+            - relationships:
+                arguments:
+                  to: ref('fct_order')
+                  field: order_id
+  - name: fct_order_payment
+    description: "Fact Table for Orders vs payments "
+    columns:
+      - name: order_id
+        description: "The orderid for this table"
+        tests:
+            - relationships:
+                arguments:
+                  to: ref('fct_order')
+                  field: order_id    

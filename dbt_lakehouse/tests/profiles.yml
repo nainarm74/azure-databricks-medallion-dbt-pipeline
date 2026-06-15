@@ -1,0 +1,11 @@
+my_databricks_project:
+  outputs:
+    dev:
+      catalog: bde2026
+      host: XXXXXX.azuredatabricks.net
+      http_path: sql/protocolv1/o/XXXX
+      schema: silver
+      threads: 1
+      token: dapiXXXXX
+      type: databricks
+  target: dev

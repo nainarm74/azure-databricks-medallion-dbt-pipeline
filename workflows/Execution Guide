@@ -1,0 +1,23 @@
+### 🚀 Deployment & Execution Guide
+
+This pipeline is designed for on-demand batch processing to optimize Azure compute costs. To run the end-to-end pipeline manually, execute the following commands:
+
+1. **Ingest Raw Data:** Execute the Databricks Auto Loader notebook to pull the latest source files into the Bronze layer.
+2. **Authenticate dbt to Databricks:** Ensure your environment variables or Databricks PAT (Personal Access Token) are set.
+3. **Execute dbt Pipeline:**
+   ```bash
+   # Check Connectivity to Databricks
+   dbt debug
+   
+   # Install dependencies
+   dbt deps
+   
+   # Run data quality tests on existing schemas
+   dbt test --select source:*
+   
+   # Run and materialize Bronze-to-Silver-to-Gold models
+   dbt run
+   
+   # Verify referential integrity across Fact and Dimension tables
+   dbt test
+   ```
